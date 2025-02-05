@@ -21,8 +21,8 @@ export default {
     }
   },
   methods: {
-    proposeTrade(bookId: number): void {
-      // Implement trade proposal logic
+    proposeTrade(book: Book): void {
+      this.$emit('proposeTrade', book);
     }
   },
   components: {
@@ -38,7 +38,7 @@ export default {
     <div class="book-grid">
       <div v-for="book in featuredBooks" :key="book.id" class="book-card">
         <BookView :book="book" />
-        <button @click="proposeTrade(book.id)">Propose Trade</button>
+        <button @click="proposeTrade(book)">Propose Trade</button>
       </div>
     </div>
   </div>

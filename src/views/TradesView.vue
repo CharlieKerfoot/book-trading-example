@@ -6,13 +6,13 @@
             <div class="trades-list">
                 <div v-for="trade in incomingTrades" :key="trade.id" class="trade-card">
                     <div class="trade-details">
-                        <h3>{{ trade.book.title }}</h3>
+                        <BookView :book="trade.book" />
                         <p>Offered by: {{ trade.offeredBy }}</p>
                         <p>Status: {{ trade.status }}</p>
                     </div>
                     <div class="trade-actions">
-                        <button class="accept-btn" @click="acceptTrade(trade.id)">Accept</button>
-                        <button class="decline-btn" @click="declineTrade(trade.id)">Decline</button>
+                        <button class="accept-btn" @click="acceptTrade(trade)">Accept</button>
+                        <button class="decline-btn" @click="declineTrade(trade)">Decline</button>
                     </div>
                 </div>
             </div>
@@ -21,14 +21,13 @@
             <h1>Your Pending Trade Requests</h1>
             <div class="trades-list">
                 <div v-for="trade in outgoingTrades" :key="trade.id" class="trade-card">
-
                     <div class="trade-details">
-                        <h3>{{ trade.book.title }}</h3>
+                        <BookView :book="trade.book" />
                         <p>Sending to: {{ trade.offeredTo }}</p>
                         <p>Status: {{ trade.status }}</p>
                     </div>
                     <div class="trade-actions" v-if="trade.status === 'pending'">
-                        <button @click="cancelTrade(trade.id)" class="cancel-btn">Cancel Request</button>
+                        <button @click="cancelTrade(trade)" class="cancel-btn">Cancel Request</button>
                     </div>
                 </div>
             </div>
@@ -37,7 +36,7 @@
 </template>
 
 <script lang="ts">
-
+import BookView from '@/components/BookView.vue'
 import type { Trade, OutgoingTrade } from '../../shared/book'
 export default {
     data() {
@@ -48,16 +47,20 @@ export default {
         incomingTrades: Array<Trade>,
         outgoingTrades: Array<OutgoingTrade>,
     },
+    emits: ['acceptTrade', 'declineTrade', 'cancelTrade'],
     methods: {
-        acceptTrade(tradeId: number): void {
-            // Implement accept logic
+        acceptTrade(trade: Trade): void {
+            this.$emit('acceptTrade', trade);
         },
-        declineTrade(tradeId: number): void {
-            // Implement decline logic
+        declineTrade(trade: Trade): void {
+            this.$emit('declineTrade', trade);
         },
-        cancelTrade(tradeId: number): void {
-
-        }
+        cancelTrade(trade: OutgoingTrade): void {
+            this.$emit('cancelTrade', trade);
+        },
+    },
+    components: {
+        BookView
     }
 }
 </script>

@@ -1,6 +1,6 @@
 <script lang="ts">
 import NavBar from './components/NavBar.vue'
-import type { Trade, OutgoingTrade } from '../shared/book'
+import type { Trade, OutgoingTrade, Book } from '../shared/book'
 export default {
   components: { NavBar },
   data() {
@@ -58,6 +58,29 @@ export default {
   },
   methods: {
     createTrade(trade: OutgoingTrade) {
+      console.log("test")
+      this.outgoingTrades.push(trade)
+    },
+    cancelTrade(trade: OutgoingTrade) {
+      this.outgoingTrades = this.outgoingTrades.filter((currTrade) => !(currTrade == trade));
+    },
+    acceptTrade(trade: Trade) {
+      this.incomingTrades = this.incomingTrades.filter((currTrade) => !(currTrade == trade));
+      this.tradeHistory.push({...trade, status: "accepted"})
+    },
+    declineTrade(trade: Trade) {
+      this.incomingTrades = this.incomingTrades.filter((currTrade) => !(trade == currTrade));
+      this.tradeHistory.push({...trade, status: "declined"})
+    },
+    proposeTrade(book: Book): void {
+      const trade: OutgoingTrade = {
+                book: book,
+                offeredTo: "",
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+                id: 0,
+                offeredBy: '' // TODO: get the current user
+      }       
       this.outgoingTrades.push(trade)
     }
   }
@@ -70,6 +93,6 @@ export default {
   <NavBar></NavBar>
 
 
-  <RouterView @create-trade="createTrade" :tradeHistory="tradeHistory" :outgoingTrades="outgoingTrades"
-    :incomingTrades="incomingTrades" />
+  <RouterView @create-trade="createTrade" @cancel-trade="cancelTrade" @accept-trade="acceptTrade" @decline-trade="declineTrade" @propose-trade="proposeTrade"
+   :tradeHistory="tradeHistory" :outgoingTrades="outgoingTrades" :incomingTrades="incomingTrades" />
 </template>
